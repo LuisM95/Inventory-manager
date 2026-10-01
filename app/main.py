@@ -3,8 +3,13 @@ from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_
 from fastapi.responses import Response
 
 from app.routes.product import router as products_router
+from app.database.connection import engine
+from app.database.models import Base
 
 import time 
+
+#Create the tables automatically at startup 
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
         title="DevOps Inventory Manager",
