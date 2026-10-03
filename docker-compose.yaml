@@ -2,18 +2,16 @@
 
 services: 
   inventory_management:
-    build:
-      context: ./app/
-      dockerfile: DockerFile
+    image: inventory-manager:latest 
     container_name: api-service
     restart: "no"
-    environment:
-      DATABASE_URL: postgresql://myuser:password@postgres:5432/inventory_management
-      REDIS_URL: redis://redis:6379
-    depends_on:
+    environment: 
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+    depends_on: 
       - postgres
       - redis
-    ports: 
+    ports:
       - "8000:8000"
       
  
