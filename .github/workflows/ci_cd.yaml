@@ -8,6 +8,29 @@ on:
 jobs: 
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: Test_password
+          POSTGRES_DB: test_inventory
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7.4-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s 
+          --health-retries 5
 
     steps:
       - name: Checkout Code
@@ -23,6 +46,9 @@ jobs:
 
       - name: Run tests
         run: python3 -m pytest tests/ -v
+        env:
+          DATABASE_URL: postgresql://test_user:Test_password@localhost:5432/test_inventory
+          REDIS_URL: redis://localhost:6379
 
   build-and-push:
     runs-on: ubuntu-latest
